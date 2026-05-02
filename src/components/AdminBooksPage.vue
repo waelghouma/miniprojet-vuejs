@@ -1,14 +1,42 @@
 <script setup>
+// Axios pour les requêtes HTTP vers NestJS
 import axios from "axios";
+
+// Imports Vue (réactivité + cycle de vie)
 import { onMounted, ref } from "vue";
+
+// Router Vue pour navigation entre pages
 import { useRouter } from "vue-router";
+
+// Fonction pour récupérer le token JWT (authentification admin)
 import { getToken } from "../utils/session";
 
+// Instance du router
 const router = useRouter();
+
+/**
+ * Liste des livres affichés dans le tableau admin
+ */
 const adminBooks = ref([]);
+
+/**
+ * Liste des auteurs (chargée mais non utilisée ici directement)
+ */
 const authors = ref([]);
+
+/**
+ * État de chargement (spinner / UX)
+ */
 const isLoading = ref(false);
+
+/**
+ * Message d'erreur global
+ */
 const errorMessage = ref("");
+
+/**
+ * Formulaire pour ajout rapide de livre (admin)
+ */
 const form = ref({
   title: "",
   image: "",
@@ -18,20 +46,29 @@ const form = ref({
   authorId: "",
 });
 
-// Navigation vers la page d'ajout
+/**
+ * Redirection vers page d'ajout de livre
+ */
 const goToAddBook = () => {
   router.push("/admin/books/add");
 };
 
-// Charge la liste des livres
+/**
+ * Charger tous les livres depuis NestJS
+ */
 const loadBooks = async () => {
   isLoading.value = true;
   errorMessage.value = "";
 
   try {
-    const { data } = await axios.get(`http://localhost:3000/books/all`);
-    adminBooks.value = Array.isArray(data?.listeBooks) ? data.listeBooks : [];
+    const { data } = await axios.get("http://localhost:3000/books/all");
+
+    // Sécurisation des données reçues
+    adminBooks.value = Array.isArray(data?.listeBooks)
+      ? data.listeBooks
+      : [];
   } catch (error) {
+    // Gestion des erreurs API ou réseau
     errorMessage.value =
       error?.response?.data?.message ||
       error?.message ||
@@ -41,22 +78,30 @@ const loadBooks = async () => {
   }
 };
 
+/**
+ * Charger les auteurs (utile pour affichage ou extension future)
+ */
 const loadAuthors = async () => {
   try {
-    const { data } = await axios.get(`http://localhost:3000/author/all`);
+    const { data } = await axios.get("http://localhost:3000/author/all");
+
     authors.value = Array.isArray(data) ? data : [];
   } catch (error) {
     authors.value = [];
   }
 };
 
-// Ajout rapide (utilise l'API admin)
+/**
+ * Ajout rapide d'un livre (admin)
+ */
 const handleAddBook = async () => {
+  // Validation titre
   if (!form.value.title.trim()) {
     window.alert("Title is required.");
     return;
   }
 
+  // Validation auteur
   const authorId = Number.parseInt(form.value.authorId, 10);
   if (!Number.isFinite(authorId)) {
     window.alert("Author is required.");
@@ -64,6 +109,7 @@ const handleAddBook = async () => {
   }
 
   try {
+    // Construction du payload envoyé à NestJS
     const payload = {
       title: form.value.title.trim(),
       editor: form.value.editor.trim(),
@@ -71,46 +117,74 @@ const handleAddBook = async () => {
       author: authorId,
       image: form.value.image.trim(),
     };
-    await axios.post(`http://localhost:3000/books/new`, payload, {
-      headers: { Authorization: `Bearer ${getToken()}` },
+
+    // Appel API création livre (avec token JWT)
+    await axios.post("http://localhost:3000/books/new", payload, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
     });
+
+    // Recharge la liste après ajout
     await loadBooks();
   } catch (error) {
     window.alert(
-      error?.response?.data?.message || error?.message || "Could not add book.",
+      error?.response?.data?.message ||
+      error?.message ||
+      "Could not add book."
     );
   }
 };
 
-// Redirige vers la page d'edition
+/**
+ * Redirection vers page d'édition d'un livre
+ */
 const handleEdit = (bookId) => {
   router.push(`/admin/books/${bookId}/edit`);
 };
 
-// Suppression d'un livre
+/**
+ * Suppression d'un livre
+ */
 const handleDelete = async (bookId) => {
+  // Recherche du livre pour confirmation utilisateur
   const book = adminBooks.value.find((item) => item.id === bookId);
   if (!book) return;
 
+  // Confirmation avant suppression
   const confirmed = window.confirm(
-    `Delete ${book.title}? This cannot be undone.`,
+    `Delete ${book.title}? This cannot be undone.`
   );
   if (!confirmed) return;
 
   try {
-    await axios.delete(`http://localhost:3000/books/remove/${bookId}`, {
-      headers: { Authorization: `Bearer ${getToken()}` },
-    });
-    adminBooks.value = adminBooks.value.filter((item) => item.id !== bookId);
+    // Appel API suppression (protégé par JWT)
+    await axios.delete(
+      `http://localhost:3000/books/remove/${bookId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      }
+    );
+
+    // Mise à jour locale sans recharger toute la liste
+    adminBooks.value = adminBooks.value.filter(
+      (item) => item.id !== bookId
+    );
   } catch (error) {
     window.alert(
       error?.response?.data?.message ||
-        error?.message ||
-        "Could not delete book.",
+      error?.message ||
+      "Could not delete book."
     );
   }
 };
 
+/**
+ * Lifecycle Vue :
+ * au chargement du composant → charge livres + auteurs
+ */
 onMounted(() => {
   loadBooks();
   loadAuthors();

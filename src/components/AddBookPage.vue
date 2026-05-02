@@ -1,14 +1,33 @@
 <script setup>
+// Import d'axios pour les requêtes HTTP vers NestJS
 import axios from "axios";
+
+// Import des outils Vue (réactivité, lifecycle, routing)
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+
+// Fonction pour récupérer le token JWT (auth)
 import { getToken } from "../utils/session";
 
+// Accès à la route actuelle (pour récupérer l'id)
 const route = useRoute();
+
+// Permet de rediriger vers une autre page
 const router = useRouter();
-// Mode edition si l'id est present
+
+/**
+ * Mode édition :
+ * Si un ID est présent dans l'URL → on est en mode EDIT
+ * Sinon → mode AJOUT
+ */
 const isEdit = computed(() => Boolean(route.params.id));
+
+// Titre dynamique de la page
 const title = computed(() => (isEdit.value ? "Edit Book" : "Add Book"));
+
+/**
+ * Formulaire réactif (v-model lié aux inputs)
+ */
 const form = ref({
   title: "",
   image: "",
@@ -17,14 +36,25 @@ const form = ref({
   summary: "",
   authorId: "",
 });
+
+// Liste des auteurs pour le select
 const authors = ref([]);
+
+// Livre actuellement chargé (en mode édition)
 const currentBook = ref(null);
+
+// Etat de chargement du submit
 const isSubmitting = ref(false);
+
+// Message d'erreur global
 const errorMessage = ref("");
 
-// Remplit le formulaire avec les donnees existantes
+/**
+ * Remplit le formulaire avec les données du livre
+ */
 const fillForm = (book) => {
   if (!book) {
+    // Si aucun livre → reset formulaire
     form.value = {
       title: "",
       image: "",
@@ -36,6 +66,7 @@ const fillForm = (book) => {
     return;
   }
 
+  // Sinon on remplit avec les données du livre
   form.value = {
     title: book.title || "",
     image: book.image || "",
@@ -46,7 +77,9 @@ const fillForm = (book) => {
   };
 };
 
-// Charge le livre a editer
+/**
+ * Charger un livre si on est en mode édition
+ */
 const loadBook = async () => {
   if (!isEdit.value) {
     currentBook.value = null;
@@ -54,17 +87,28 @@ const loadBook = async () => {
     return;
   }
 
+  // Récupère l'id depuis l'URL
   const id = Number.parseInt(route.params.id, 10);
+
+  // Vérifie si c'est un nombre valide
   if (!Number.isFinite(id)) {
     return;
   }
 
   try {
+    // Récupère tous les livres depuis l'API NestJS
     const { data } = await axios.get(`http://localhost:3000/books/all`);
+
+    // Sécurise les données reçues
     const list = Array.isArray(data?.listeBooks) ? data.listeBooks : [];
+
+    // Trouve le livre correspondant à l'id
     currentBook.value = list.find((book) => book.id === id) || null;
+
+    // Remplit le formulaire
     fillForm(currentBook.value);
   } catch (error) {
+    // Gestion des erreurs
     errorMessage.value =
       error?.response?.data?.message ||
       error?.message ||
@@ -72,24 +116,33 @@ const loadBook = async () => {
   }
 };
 
-// Charge la liste des auteurs pour le select
+/**
+ * Charger les auteurs pour le dropdown
+ */
 const loadAuthors = async () => {
   try {
     const { data } = await axios.get(`http://localhost:3000/author/all`);
+
+    // Vérifie que c'est un tableau
     authors.value = Array.isArray(data) ? data : [];
   } catch (error) {
     authors.value = [];
   }
 };
 
-// Envoi de creation ou mise a jour
+/**
+ * Soumission du formulaire (AJOUT ou EDIT)
+ */
 const handleSubmit = async () => {
   errorMessage.value = "";
+
+  // Validation titre
   if (!form.value.title.trim()) {
     errorMessage.value = "Title is required.";
     return;
   }
 
+  // Validation auteur
   const authorId = Number.parseInt(form.value.authorId, 10);
   if (!Number.isFinite(authorId)) {
     errorMessage.value = "Author is required.";
@@ -97,6 +150,8 @@ const handleSubmit = async () => {
   }
 
   isSubmitting.value = true;
+
+  // Construction du payload envoyé à NestJS
   const payload = {
     title: form.value.title.trim(),
     editor: form.value.editor.trim(),
@@ -107,16 +162,34 @@ const handleSubmit = async () => {
   };
 
   try {
+    // MODE EDITION
     if (isEdit.value) {
       const id = Number.parseInt(route.params.id, 10);
-      await axios.put(`http://localhost:3000/books/edit/${id}`, payload, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-    } else {
-      await axios.post(`http://localhost:3000/books/new`, payload, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
+
+      await axios.put(
+        `http://localhost:3000/books/edit/${id}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`, // token JWT
+          },
+        }
+      );
     }
+    // MODE AJOUT
+    else {
+      await axios.post(
+        `http://localhost:3000/books/new`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+    }
+
+    // Redirection après succès
     router.push("/admin/books");
   } catch (error) {
     errorMessage.value =
@@ -128,17 +201,25 @@ const handleSubmit = async () => {
   }
 };
 
+/**
+ * Surveille le changement d'ID dans l'URL
+ * (utile si navigation entre edit pages sans reload)
+ */
 watch(
   () => route.params.id,
-  () => loadBook(),
+  () => loadBook()
 );
 
+/**
+ * Au chargement du composant :
+ * - charge les auteurs
+ * - charge le livre si édition
+ */
 onMounted(() => {
   loadAuthors();
   loadBook();
 });
 </script>
-
 <template>
   <main class="shop">
     <section class="admin-header">
