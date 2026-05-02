@@ -1,6 +1,5 @@
-# Bookstore Landing Page
-
-Single-page Vue 3 app that recreates the Bookstore layout shown in the reference image.
+## author
+Ghouma Wael
 
 ## Development
 
