@@ -1,7 +1,9 @@
 const STORAGE_KEY = "favourites";
 
+// Verifie la disponibilite du stockage local
 export const canUseStorage = () => typeof localStorage !== "undefined";
 
+// Charge les IDs favoris depuis le stockage
 export const loadFavouriteIds = () => {
   if (!canUseStorage()) {
     return [];
@@ -16,6 +18,7 @@ export const loadFavouriteIds = () => {
   }
 };
 
+// Sauvegarde la liste des favoris
 export const saveFavouriteIds = (ids) => {
   if (!canUseStorage()) {
     return false;

@@ -6,6 +6,7 @@ export const useToast = () => {
   const isVisible = ref(false);
   let timeoutId;
 
+  // Affiche un toast temporaire
   const showToast = (text, nextVariant = "info", duration = 2400) => {
     message.value = text;
     variant.value = nextVariant;

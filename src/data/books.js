@@ -1,8 +1,12 @@
+// Donnees locales d'exemple (fallback ou maquette)
 export const books = [
   {
     id: 1,
     title: "The Outsider",
+    editor: "Secker & Warburg",
     year: 1942,
+    author: "Albert Camus",
+    summary: "Existential novel about a man detached from society.",
     coverLabel: "1984",
     coverClass: "cover-red",
     image: "https://covers.openlibrary.org/b/id/7222246-L.jpg",
@@ -10,7 +14,10 @@ export const books = [
   {
     id: 2,
     title: "To Kill a Mockingbird",
+    editor: "J.B. Lippincott & Co.",
     year: 1960,
+    author: "Harper Lee",
+    summary: "A classic about justice and growing up in the South.",
     coverLabel: "To Kill",
     coverClass: "cover-ivory",
     image: "https://covers.openlibrary.org/b/id/9874158-L.jpg",
@@ -18,7 +25,10 @@ export const books = [
   {
     id: 3,
     title: "The Great Gatsby",
+    editor: "Charles Scribner's Sons",
     year: 1925,
+    author: "F. Scott Fitzgerald",
+    summary: "A story of ambition, love, and the American dream.",
     coverLabel: "Gatsby",
     coverClass: "cover-paper",
     image: "https://covers.openlibrary.org/b/id/7222161-L.jpg",
@@ -26,7 +36,10 @@ export const books = [
   {
     id: 4,
     title: "100 Years of Solitude",
+    editor: "Harper & Row",
     year: 1967,
+    author: "Gabriel Garcia Marquez",
+    summary: "The rise and fall of the Buendia family in Macondo.",
     coverLabel: "Solitude",
     coverClass: "cover-tan",
     image: "https://covers.openlibrary.org/b/id/9251912-L.jpg",
@@ -34,7 +47,10 @@ export const books = [
   {
     id: 5,
     title: "Moby Dick",
+    editor: "Harper & Brothers",
     year: 1851,
+    author: "Herman Melville",
+    summary: "A whaling voyage driven by obsession and revenge.",
     coverLabel: "Moby",
     coverClass: "cover-teal",
     image: "https://covers.openlibrary.org/b/id/12028492-L.jpg",
@@ -42,7 +58,10 @@ export const books = [
   {
     id: 6,
     title: "War and Peace",
+    editor: "The Russian Messenger",
     year: 1869,
+    author: "Leo Tolstoy",
+    summary: "Epic tale of society, war, and destiny in Russia.",
     coverLabel: "Peace",
     coverClass: "cover-gold",
     image: "https://covers.openlibrary.org/b/id/8231996-L.jpg",

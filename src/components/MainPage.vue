@@ -1,3 +1,10 @@
+<script setup>
+// Images statiques pour les cartes de livres populaires
+import coverCamus from "../assets/cover-camus.svg";
+import coverKafka from "../assets/cover-kafka.svg";
+import coverDosSantos from "../assets/cover-dos-santos.svg";
+</script>
+
 <template>
   <main>
     <section class="hero">
@@ -13,30 +20,25 @@
       <h2>Livres populaires</h2>
       <div class="card-grid">
         <article class="book-card">
-          <div class="cover cover-1">
-            <span class="cover-author">Albert Camus</span>
-            <span class="cover-title">L'etranger</span>
-          </div>
+          <img class="book-card-image" :src="coverCamus" alt="L'etranger" />
           <h3>L'etranger</h3>
           <p>Un resume captivant pour ce livre incontournable.</p>
           <button class="secondary">Voir plus</button>
         </article>
 
         <article class="book-card">
-          <div class="cover cover-2">
-            <span class="cover-author">Franz Kafka</span>
-            <span class="cover-title">Le proces</span>
-          </div>
+          <img class="book-card-image" :src="coverKafka" alt="Le proces" />
           <h3>Le proces</h3>
           <p>Decouvrez pourquoi ce livre est un best-seller.</p>
           <button class="secondary">Voir plus</button>
         </article>
 
         <article class="book-card">
-          <div class="cover cover-3">
-            <span class="cover-author">J. R. Dos Santos</span>
-            <span class="cover-title">La formule de dieu</span>
-          </div>
+          <img
+            class="book-card-image"
+            :src="coverDosSantos"
+            alt="La formule de dieu"
+          />
           <h3>La formule de dieu</h3>
           <p>Un recit qui restera grave dans votre memoire.</p>
           <button class="secondary">Voir plus</button>

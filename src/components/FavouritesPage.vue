@@ -1,6 +1,6 @@
 <script setup>
-import { computed, ref } from "vue";
-import { books } from "../data/books";
+import axios from "axios";
+import { computed, onMounted, ref } from "vue";
 import {
   canUseStorage,
   loadFavouriteIds,
@@ -8,13 +8,37 @@ import {
 } from "../utils/favourites";
 import { useToast } from "../utils/useToast";
 
+const books = ref([]);
+const isLoading = ref(false);
 const favouriteIds = ref(loadFavouriteIds());
 const { message, variant, isVisible, showToast } = useToast();
+const API_BASE = import.meta.env?.VITE_API_BASE ?? "http://localhost:3000";
+
+// Charge les livres pour filtrer les favoris
+const loadBooks = async () => {
+  isLoading.value = true;
+  try {
+    const { data } = await axios.get(`${API_BASE}/books/all`);
+    books.value = Array.isArray(data?.listeBooks) ? data.listeBooks : [];
+  } catch (error) {
+    showToast(
+      error?.response?.data?.message ||
+        error?.message ||
+        "Failed to load books.",
+      "error",
+    );
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(loadBooks);
 
 const favouriteBooks = computed(() =>
-  books.filter((book) => favouriteIds.value.includes(book.id)),
+  books.value.filter((book) => favouriteIds.value.includes(book.id)),
 );
 
+// Retire un livre des favoris
 const removeFavourite = (bookId) => {
   if (!favouriteIds.value.includes(bookId)) {
     showToast("Book is not in favourites.", "info");
@@ -41,7 +65,10 @@ const removeFavourite = (bookId) => {
     <div v-if="isVisible" class="toast" :class="`toast--${variant}`">
       {{ message }}
     </div>
-    <section v-if="favouriteBooks.length" class="favourites-grid">
+    <section v-if="isLoading" class="favourites-empty">
+      <p>Loading...</p>
+    </section>
+    <section v-else-if="favouriteBooks.length" class="favourites-grid">
       <article v-for="book in favouriteBooks" :key="book.id" class="shop-card">
         <img class="shop-image" :src="book.image" :alt="book.title" />
         <div class="shop-details">

@@ -1,8 +1,8 @@
 :root {
-  --blue-900: #0b2b4f;
-  --blue-800: #0f3b6f;
-  --blue-700: #15508f;
-  --blue-500: #2f6fb2;
+  --blue-900: #5a0b12;
+  --blue-800: #7a121b;
+  --blue-700: #9b1924;
+  --blue-500: #c0353f;
   --gray-100: #f7f7f7;
   --gray-200: #e3e3e3;
   --gray-300: #d0d0d0;
@@ -146,6 +146,14 @@ button {
   transform: translateY(20px);
 }
 
+.book-card-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
 .book-card:nth-child(2) {
   animation-delay: 0.15s;
 }
@@ -248,6 +256,21 @@ button {
   background: #fbfbfb;
 }
 
+.field select {
+  height: 28px;
+  border: 1px solid #c2c2c2;
+  border-radius: 3px;
+  padding: 0 10px;
+  font-size: 13px;
+  background: #fbfbfb;
+}
+
+.form-error {
+  color: #b11324;
+  font-size: 12px;
+  margin: 0;
+}
+
 .auth-form .primary,
 .auth-form .secondary {
   align-self: center;
@@ -256,6 +279,176 @@ button {
 
 .shop {
   padding: 18px 24px 40px;
+}
+
+.admin {
+  padding: 18px 24px 40px;
+}
+
+.admin-header {
+  max-width: 1120px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: 22px;
+  color: #2b2b2b;
+}
+
+.admin-table-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 10px 12px;
+  font-size: 12px;
+  text-align: left;
+  border-bottom: 1px solid #d7dbe2;
+  vertical-align: middle;
+}
+
+.admin-table th {
+  background: #f6f7f9;
+  font-weight: 700;
+  color: #2c2c2c;
+}
+
+.admin-table td.title {
+  font-weight: 600;
+}
+
+.admin-table .actions {
+  width: 96px;
+  text-align: right;
+}
+
+.admin-table .truncate {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-table .empty {
+  text-align: center;
+  padding: 20px 12px;
+  color: var(--text-soft);
+}
+
+.icon-button {
+  width: 34px;
+  height: 30px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, var(--blue-500) 0%, var(--blue-800) 100%);
+  color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-soft);
+  margin-left: 8px;
+}
+
+.icon-button svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.admin-empty {
+  max-width: 1120px;
+  margin: 0 auto;
+  background: var(--gray-100);
+  padding: 28px 24px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+}
+
+.admin-empty h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.admin-empty p {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 20;
+}
+
+.modal {
+  width: 100%;
+  max-width: 360px;
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  animation: fade-in 0.2s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.modal-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f3f3f3;
+  color: #3a3a3a;
+  font-size: 18px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px 20px;
+}
+
+.modal-body textarea {
+  border: 1px solid #c2c2c2;
+  border-radius: 3px;
+  padding: 8px 10px;
+  font-size: 13px;
+  background: #fbfbfb;
+  resize: vertical;
 }
 
 .shop-add {
@@ -267,7 +460,8 @@ button {
 }
 
 .shop-add .field input,
-.shop-add .field textarea {
+.shop-add .field textarea,
+.shop-add .field select {
   width: 100%;
 }
 
@@ -460,6 +654,11 @@ button {
   font-size: 14px;
 }
 
+.primary.small {
+  padding: 8px 14px;
+  font-size: 12px;
+}
+
 .secondary {
   background: linear-gradient(180deg, #2f3e58 0%, #1d2f49 100%);
   color: var(--white);
@@ -571,5 +770,11 @@ button {
 
   .add-actions {
     justify-content: center;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 }
